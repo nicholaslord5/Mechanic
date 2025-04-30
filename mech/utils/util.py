@@ -1,61 +1,83 @@
-from datetime import datetime, timedelta, timezone
-from jose import jwt
-import jose
+import functools
+import jwt
+from jwt import InvalidTokenError
+from flask import request, jsonify, current_app
+from mech.models import Mechanic
 from functools import wraps
-from flask import request, jsonify
 
-SECRET_KEY = "a super secret, secret key"
-ALGO = "HS256"
-
-def encode_customer_token(customer_id):
-    payload = {
-        'exp': datetime.now(timezone.utc) + timedelta(hours=1),
-        'iat': datetime.now(timezone.utc),
-        'sub': str(customer_id),
-        'role': 'customer'
-    }
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGO)
+SECRET_KEY = 'a super secret, secret key'
+JWT_ALGO = 'HS256'
 
 def encode_mechanic_token(mechanic_id):
-    payload = {
-        'exp': datetime.now(timezone.utc) + timedelta(hours=1),
-        'iat': datetime.now(timezone.utc),
-        'sub': str(mechanic_id),
-        'role': 'mechanic'
-    }
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGO)
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        ### Use same logic to extract and decode ###
-        data = jwt.decode(token, SECRET_KEY, algorithms=[ALGO])
-        if data.get('role') != 'customer':
-            return jsonify({'message': 'Invalid role'}), 403
-        return f(data['sub'], *args, **kwargs)
-    return decorated
+    payload = {'sub': str(mechanic_id)}
+    key = current_app.config['SECRET_KEY']
+    algo = current_app.config.get('JWT_ALGO', 'HS256')
+    return jwt.encode(payload, key, algorithm=algo)
 
 def mechanic_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        if 'Authorization' in request.headers:
-            parts = request.headers['Authorization'].split()
-            if len(parts) == 2:
-                token = parts[1]
-        if not token:
-            return jsonify({'message': 'Token is missing!'}), 401
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        auth = request.headers.get('Authorization', '')
+        parts = auth.split()
+        if len(parts) != 2 or parts[0].lower() != 'bearer':
+            return jsonify({'error': 'Missing or invalid Authorization header'}), 401
 
+        token = parts[1]
         try:
-            data = jwt.decode(token, SECRET_KEY, algorithms=[ALGO])
-        except jose.exceptions.ExpiredSignatureError:
-            return jsonify({'message': 'Token has expired!'}), 401
-        except jose.exceptions.JWTError:
-            return jsonify({'message': 'Invalid token!'}), 401
+            data = jwt.decode(
+                token,
+                current_app.config['SECRET_KEY'],
+                algorithms=[current_app.config.get('JWT_ALGO', 'HS256')]
+            )
+        except InvalidTokenError as e:
+            return jsonify({'error': 'Invalid token'}), 401
+        
+        sub = data.get('sub')
+        try:
+            mech_id = int(sub)
+        except (TypeError, ValueError):
+            return jsonify({'error': 'Invalid token payload'}), 401
+        
+        if not Mechanic.query.get(mech_id):
+            return jsonify({'error': 'Invalid token payload'}), 401
 
-        if data.get('role') != 'mechanic':
-            return jsonify({'message': 'Mechanic access required'}), 403
+        return f(mech_id, *args, **kwargs)
 
-        ### Pass mechanic_id through to the route ###
-        return f(data['sub'], *args, **kwargs)
-    return decorated
+    return wrapper
+
+def encode_customer_token(customer_id):
+    payload = {'sub': str(customer_id)}
+    key = current_app.config['SECRET_KEY']
+    algo = current_app.config.get('JWT_ALGO', 'HS256')
+    return jwt.encode(payload, key, algorithm=algo)
+
+def customer_required(f):
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        auth = request.headers.get('Authorization', '')
+        parts = auth.split()
+        if len(parts) != 2 or parts[0].lower() != 'bearer':
+            return jsonify({'error': 'Missing or invalid Authorization header'}), 401
+
+        token = parts[1]
+        try:
+            data = jwt.decode(
+                token,
+                current_app.config['SECRET_KEY'],
+                algorithms=[current_app.config.get('JWT_ALGO', 'HS256')]
+            )
+        except InvalidTokenError:
+            return jsonify({'error': 'Invalid token'}), 401
+
+        sub = data.get('sub')
+        try:
+            cust_id = int(sub)
+        except (TypeError, ValueError):
+            return jsonify({'error': 'Invalid token payload'}), 401
+
+        if not Customer.query.get(cust_id):
+            return jsonify({'error': 'Invalid token payload'}), 401
+
+        return f(cust_id, *args, **kwargs)
+
+    return wrapper

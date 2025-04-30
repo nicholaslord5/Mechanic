@@ -1,13 +1,13 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from mech.models import Inventory
 from mech.extensions import ma
+from mech.models import Inventory
 
 class InventorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model        = Inventory
-        include_fk   = True
-        load_instance= False
-        fields       = ("id", "name", "price")
+        model = Inventory
+        load_instance = False
+        include_fk = True
+        fields = ("id", "name", "price")
 
-inventory_schema  = InventorySchema()
+inventory_schema   = InventorySchema()
 inventories_schema = InventorySchema(many=True)

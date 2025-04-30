@@ -1,9 +1,9 @@
+from flask import Flask
 from flask import Blueprint, request, jsonify
 from mech.models import Inventory, ServiceTicket, db
 from mech.blueprints.inventory.schemas import inventory_schema, inventories_schema
 from mech.utils.util import mechanic_required
-
-inventory_bp = Blueprint('inventory', __name__, url_prefix='/inventory')
+from . import inventory_bp
 
 @inventory_bp.route("/", methods=['POST'])
 @mechanic_required

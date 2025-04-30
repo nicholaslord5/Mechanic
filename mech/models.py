@@ -1,6 +1,7 @@
 from .extensions import db
 from sqlalchemy import Table, Column, Integer, ForeignKey, String, Date
 from sqlalchemy.orm import relationship
+from datetime import date
 
 service_mechanics = Table(
     "service_mechanics",
@@ -57,10 +58,11 @@ class ServiceTicket(db.Model):
 
     customer = relationship("Customer", back_populates="tickets")
 
+    # Updated relationship name to match Mechanic.service_tickets
     mechanics = relationship(
         "Mechanic",
         secondary=service_mechanics,
-        back_populates="tickets",
+        back_populates="service_tickets",
         lazy="dynamic"
     )
     parts = relationship(
@@ -76,11 +78,12 @@ class Mechanic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(255))
+    password = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     salary = db.Column(db.Integer, nullable=False)
 
-    tickets = relationship(
+    # Renamed relationship to service_tickets to match route logic
+    service_tickets = relationship(
         "ServiceTicket",
         secondary=service_mechanics,
         back_populates="mechanics",

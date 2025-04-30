@@ -1,14 +1,15 @@
 from flask import Flask
-from .blueprints.mechanics.routes import mechanics_bp
-from .blueprints.service_tickets.routes import service_tickets_bp
-from .blueprints.customers import customers_bp
-from .blueprints.inventory import inventory_bp
+from mech.blueprints.mechanics.routes import mechanics_bp
+from mech.blueprints.service_tickets.routes import service_tickets_bp
+from mech.blueprints.inventory import inventory_bp
 from .extensions import db, ma, limiter, cache
+from mech.blueprints.customers.routes import customers_bp
+from .config import DevelopmentConfig, TestingConfig, ProductionConfig
 
 def create_app(config_name="development"):
     app = Flask(__name__)
-   
-    app.config.from_object(f'config.{config_name}')
+    app.url_map.strict_slashes = False
+    app.config.from_object(f'mech.config.{config_name}')
     db.init_app(app)
     ma.init_app(app)
     limiter.init_app(app)
