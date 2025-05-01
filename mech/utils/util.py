@@ -4,9 +4,9 @@ from jwt import InvalidTokenError
 from flask import request, jsonify, current_app
 from mech.models import Mechanic
 from functools import wraps
+import os
 
-SECRET_KEY = 'a super secret, secret key'
-JWT_ALGO = 'HS256'
+SECRET_KEY = os.environ.get('SECRET_KEY') or "super secret secrets"
 
 def encode_mechanic_token(mechanic_id):
     payload = {'sub': str(mechanic_id)}

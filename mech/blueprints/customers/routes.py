@@ -12,7 +12,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import request, jsonify, current_app
 import jwt
 from jwt import InvalidTokenError
-from mech.utils.util import SECRET_KEY, JWT_ALGO
 from mech.models import Customer, db
 
 @customers_bp.route("/", methods=['POST'])

@@ -3,7 +3,7 @@ from datetime import date
 from mech.extensions import db
 from mech.models import ServiceTicket, Mechanic
 from mech.blueprints.service_tickets.schemas import service_ticket_schema, service_tickets_schema
-from mech.utils.util import mechanic_required, SECRET_KEY, JWT_ALGO
+from mech.utils.util import mechanic_required
 from mech.blueprints.service_tickets import service_tickets_bp
 
 @service_tickets_bp.route('/', methods=['GET'])

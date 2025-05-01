@@ -2,7 +2,7 @@ from datetime import date
 from marshmallow import fields, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from mech.models import ServiceTicket
-from mech.blueprints.mechanics.schemas import MechanicSchema  # import the class
+from mech.blueprints.mechanics.schemas import MechanicSchema
 
 class ServiceDateField(fields.Field):
     def _deserialize(self, value, attr, data, **kwargs):

@@ -12,7 +12,7 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:5000
+  - url: https://mechanic-ny9i.onrender.com
 
 security:
   - bearerAuth: []

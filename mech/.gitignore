@@ -1,9 +1,11 @@
-.venv/
+.venv
+/.venv
 env/
 venv/
 __pycache__/
 *.pyc
 *.pyo
+.env
 
 instance/
 *.db
