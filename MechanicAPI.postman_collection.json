@@ -7,36 +7,13 @@
 	},
 	"item": [
 		{
-			"name": "GetCustomers",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://127.0.0.1:5000/customers/",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"customers",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Create Customer",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"John Smith\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"9876543210\"\n}",
+					"raw": "{\n    \"name\": \"Nancy Smith\",\n    \"email\": \"nancy@test.com\",\n    \"password\": \"password\",\n    \"phone\": \"9876543210\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -44,7 +21,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/customers/",
+					"raw": "http://127.0.0.1:5001/customers/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -52,7 +29,7 @@
 						"0",
 						"1"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"customers",
 						""
@@ -77,7 +54,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"John Smith\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"9876543210\",\n    \"salary\": \"60000\"\n}",
+					"raw": "{\n    \"name\": \"John Wick\",\n    \"email\": \"wick@example.com\",\n    \"phone\": \"9876543210\",\n    \"salary\": \"60000\",\n    \"password\": \"password\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -85,7 +62,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics/",
+					"raw": "http://127.0.0.1:5001/mechanics/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -93,7 +70,7 @@
 						"0",
 						"1"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"mechanics",
 						""
@@ -105,138 +82,27 @@
 		{
 			"name": "create service ticket",
 			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"vin\": \"1234456KREKRJE889\",\n    \"service_date\": \"01-01-01\",\n    \"service_desc\": \"replace brakes\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/service-tickets/",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"service-tickets",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add mechanic w password",
-			"request": {
 				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"johndoe@test.com\",\n    \"phone\": \"123456789\",\n    \"password\": \"johndoe\",\n    \"salary\": \"90000\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyJ9.jjjQKhHaFQgSTScjWxJcNlKQe5nzZ2OJ9zC1_GgwjR8",
+							"type": "string"
 						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics/",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"mechanics",
-						""
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add customer w password",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Jimmy MacElroy\",\n    \"email\": \"jimmy@test.com\",\n    \"phone\": \"123456789\",\n    \"password\": \"kickIce\",\n    \"salary\": \"90000\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics/",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"mechanics",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "login mechanic",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"let body = pm.response.json();",
-							"if (body.auth_token) {",
-							"  pm.environment.set(\"mechanic_token\", body.auth_token);",
-							"}",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
 				},
 				"method": "POST",
 				"header": [
 					{
-						"key": "Content-Type",
-						"value": "application/json",
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjh9.zvhIwIxCabZoE2AO35nHXqeitcx1slQZ2cMAaBWw1uA",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"johndoe@test.com\",\n    \"password\": \"johndoe\"\n}",
+					"raw": "{\n    \"vin\": \"1234456KREKRJE889\",\n    \"service_date\": \"2025-01-01\",\n    \"service_desc\": \"replace brakes\",\n    \"customer_id\": \"12\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -244,7 +110,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics/login",
+					"raw": "http://127.0.0.1:5001/service_tickets/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -252,7 +118,81 @@
 						"0",
 						"1"
 					],
-					"port": "5000",
+					"port": "5001",
+					"path": [
+						"service_tickets",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create inventory",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyJ9.jjjQKhHaFQgSTScjWxJcNlKQe5nzZ2OJ9zC1_GgwjR8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Battery\",\n    \"price\": \"100\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/inventory/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"inventory",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login mechanic",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"wick@example.com\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/mechanics/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
 					"path": [
 						"mechanics",
 						"login"
@@ -262,14 +202,14 @@
 			"response": []
 		},
 		{
-			"name": "create/add part to inventory",
+			"name": "login customer",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDQ5NjE2NDMsImlhdCI6MTc0NDk1ODA0Mywic3ViIjoiOCIsInJvbGUiOiJtZWNoYW5pYyJ9.LrFjemyQcAQuWPuUoK7El2uuin7FQyMLVUNhGUthrJw",
+							"value": "",
 							"type": "string"
 						}
 					]
@@ -277,14 +217,14 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "Content-Type",
-						"value": "application/json",
+						"key": "Authorization",
+						"value": "Bearer uBzlejVnAJqFPOFHxf7f",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Oil Filter\",\n    \"price\": 10.50\n}",
+					"raw": "{\n    \"email\": \"nancy@test.com\",\n    \"password\": \"password\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -292,7 +232,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/inventory",
+					"raw": "http://127.0.0.1:5001/customers/login/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -300,9 +240,451 @@
 						"0",
 						"1"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
-						"inventory"
+						"customers",
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET customers",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/customers/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"customers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET service tix",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/service_tickets/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"service_tickets",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Mechanics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/mechanics/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"mechanics",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET inventory",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/inventory/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"inventory",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT mechanic",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyJ9.jjjQKhHaFQgSTScjWxJcNlKQe5nzZ2OJ9zC1_GgwjR8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"phone\": \"1115555555\",\n    \"salary\": \"70000\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/mechanics/13",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"mechanics",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMSJ9.I-HUTn6SH5nHTG2pn-oUImjpN9srbg01ytUFRr2EGYA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"phone\": \"5555552222\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/customers/21",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"customers",
+						"21"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT service ticket",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyJ9.jjjQKhHaFQgSTScjWxJcNlKQe5nzZ2OJ9zC1_GgwjR8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"service_desc\": \"oil change\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/service_tickets/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"service_tickets",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT inventory",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyJ9.jjjQKhHaFQgSTScjWxJcNlKQe5nzZ2OJ9zC1_GgwjR8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"price\": \"12\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/inventory/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"inventory",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE mechanic",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5In0.cM5Ii1krBciqASwyfMKsiO1s_ZPgOg7fMqnliPwZpBQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/mechanics/9",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"mechanics",
+						"9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var template = `",
+							"<style type=\"text/css\">",
+							"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"    .tftable tr {background-color:#ffffff;}",
+							"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"    .tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"    <tr>",
+							"        <th>Error Message</th>",
+							"    </tr>",
+							"    ",
+							"    <tr>",
+							"        <td>{{response.error}}</td>",
+							"    </tr>",
+							"</table>",
+							"`;",
+							"",
+							"function constructVisualizerPayload() {",
+							"    return { response: pm.response.json() }",
+							"}",
+							"",
+							"pm.visualizer.set(template, constructVisualizerPayload());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjh9.FfeXyoFgwiwTqaxyujcnKsxPxrb8eQ_0NFEvOGd9Bmk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"jim@test.com\",\n    \"password\": \"kickIce\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/customers/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"customers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE service ticket",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyJ9.jjjQKhHaFQgSTScjWxJcNlKQe5nzZ2OJ9zC1_GgwjR8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/service_tickets/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"service_tickets",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE inventory",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyJ9.jjjQKhHaFQgSTScjWxJcNlKQe5nzZ2OJ9zC1_GgwjR8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/inventory/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"inventory",
+						"2"
 					]
 				}
 			},
