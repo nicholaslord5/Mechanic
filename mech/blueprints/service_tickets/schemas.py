@@ -3,6 +3,7 @@ from marshmallow import fields, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from mech.models import ServiceTicket
 from mech.blueprints.mechanics.schemas import MechanicSchema
+from mech.blueprints.customers.schemas import CustomerSchema
 
 class ServiceDateField(fields.Field):
     def _deserialize(self, value, attr, data, **kwargs):
@@ -21,14 +22,18 @@ class ServiceDateField(fields.Field):
         raise ValidationError("Unsupported date format.")
 
 class ServiceTicketSchema(SQLAlchemyAutoSchema):
-    ###### use custom field to parse date strings/tuples #####
     service_date = ServiceDateField(required=True)
 
-    ###### nest only id and for mechanics #####
     mechanics = fields.Nested(
         MechanicSchema,
         only=("id", "name"),
         many=True,
+        dump_only=True
+    )
+
+    customer = fields.Nested(
+        CustomerSchema,
+        only=("id", "name"),
         dump_only=True
     )
 
@@ -42,6 +47,7 @@ class ServiceTicketSchema(SQLAlchemyAutoSchema):
             "service_date",
             "service_desc",
             "customer_id",
+            "customer",
             "mechanics",
         )
 

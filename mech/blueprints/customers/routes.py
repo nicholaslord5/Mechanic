@@ -16,6 +16,41 @@ from mech.models import Customer, db
 
 @customers_bp.route("/", methods=['POST'])
 def create_customer():
+    """
+    Create Customer
+
+    ---
+    tags:
+      - Customers
+    summary: Register a new customer
+    description: Create a customer by providing name, email, phone, and password.
+    consumes:
+      - application/json
+    parameters:
+      - in: body
+        name: customer
+        required: true
+        schema:
+          $ref: "#/definitions/CustomerCreate"
+    responses:
+      201:
+        description: Customer created successfully
+        schema:
+          $ref: "#/definitions/Customer"
+        examples:
+          application/json:
+            id: 1
+            name: "Jane Doe"
+            email: "jane@example.com"
+            phone: "555-555-1234"
+      400:
+        description: Validation error
+        schema:
+          $ref: "#/definitions/ErrorResponse"
+        examples:
+          application/json:
+            error: "Invalid input data"
+    """
     try:
         customer_data = customer_schema.load(request.json)
     except ValidationError as e:
@@ -30,6 +65,47 @@ def create_customer():
 
 @customers_bp.route("/login", methods=['POST'])
 def customer_login():
+    """
+    Customer Login
+
+    ---
+    tags:
+      - Customers
+    summary: Authenticate customer and return JWT
+    description: Login a customer using email and password to receive a JWT token.
+    consumes:
+      - application/json
+    parameters:
+      - in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: "#/definitions/CustomerLogin"
+    responses:
+      200:
+        description: Login successful
+        schema:
+          $ref: "#/definitions/CustomerAuthResponse"
+        examples:
+          application/json:
+            status: "success"
+            customer: 1
+            auth_token: "eyJhbGciOiJIUzI1NiIs..."
+      400:
+        description: Missing credentials
+        schema:
+          $ref: "#/definitions/ErrorResponse"
+        examples:
+          application/json:
+            error: "Email & password required"
+      401:
+        description: Invalid credentials
+        schema:
+          $ref: "#/definitions/ErrorResponse"
+        examples:
+          application/json:
+            error: "Invalid credentials"
+    """
     data = request.get_json() or {}
     email = data.get('email')
     password = data.get('password')
@@ -50,7 +126,52 @@ def customer_login():
 
 @customers_bp.route("/", methods=['GET'])
 def get_customers():
-    #### apply pagination to GET customers ####
+    """
+    List Customers
+
+    ---
+    tags:
+      - Customers
+    summary: Retrieve a paginated list of customers
+    description: Returns customers along with pagination metadata.
+    parameters:
+      - in: query
+        name: page
+        type: integer
+        required: false
+        default: 1
+        description: Page number
+      - in: query
+        name: per_page
+        type: integer
+        required: false
+        default: 10
+        description: Number of customers per page
+    responses:
+      200:
+        description: A paginated list of customers
+        schema:
+          type: object
+          properties:
+            customers:
+              type: array
+              items:
+                $ref: "#/definitions/Customer"
+            meta:
+              $ref: "#/definitions/Meta"
+        examples:
+          application/json:
+            customers:
+              - id: 1
+                name: "Jane Doe"
+                email: "jane@example.com"
+                phone: "555-555-1234"
+            meta:
+              page: 1
+              per_page: 10
+              total: 25
+              pages: 3
+    """
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
 
@@ -71,6 +192,44 @@ def get_customers():
 
 @customers_bp.route("/<int:id>", methods=['PUT'])
 def update_customer(id):
+    """
+    Update Customer
+
+    ---
+    tags:
+      - Customers
+    summary: Update an existing customer
+    description: Modify one or more fields of a customer record.
+    parameters:
+      - in: path
+        name: id
+        required: true
+        type: integer
+        description: Customer ID
+      - in: body
+        name: customer
+        required: true
+        schema:
+          $ref: "#/definitions/CustomerUpdate"
+    responses:
+      200:
+        description: Customer updated successfully
+        schema:
+          $ref: "#/definitions/Customer"
+        examples:
+          application/json:
+            id: 1
+            name: "Jane Doe"
+            email: "jane@newemail.com"
+            phone: "999-999-9999"
+      404:
+        description: Customer not found
+        schema:
+          $ref: "#/definitions/ErrorResponse"
+        examples:
+          application/json:
+            error: "Customer not found"
+    """
     customer = Customer.query.get(id)
     if not customer:
         return jsonify({"error": "Customer not found"}), 404
@@ -84,16 +243,54 @@ def update_customer(id):
 
 @customers_bp.route('/', methods=['DELETE'])
 def delete_current_customer():
+    """
+    Delete Current Customer
+
+    ---
+    tags:
+      - Customers
+    summary: Delete the authenticated customer
+    description: Delete the customer associated with the provided JWT.
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer JWT token
+    responses:
+      200:
+        description: Customer deletion successful
+        schema:
+          $ref: "#/definitions/MessageResponse"
+        examples:
+          application/json:
+            message: "deleted customer 1"
+      401:
+        description: Unauthorized or invalid token
+        schema:
+          $ref: "#/definitions/ErrorResponse"
+        examples:
+          application/json:
+            error: "Missing or invalid Authorization header"
+      404:
+        description: Customer not found
+        schema:
+          $ref: "#/definitions/ErrorResponse"
+        examples:
+          application/json:
+            error: "Customer not found"
+    """
     auth = request.headers.get('Authorization', '')
     if not auth.lower().startswith('bearer '):
         return jsonify({'error': 'Missing or invalid Authorization header'}), 401
 
     token = auth.split(' ', 1)[1]
-    # parse payload without verifying signature
+    #### parse payload without verifying signature
     try:
-        # JWT is header.payload.signature
         payload_b64 = token.split('.')[1]
-        # pad base64 if needed
+        ##### pad base64
         padding = '=' * (-len(payload_b64) % 4)
         payload_b64 += padding
         data = json.loads(base64.urlsafe_b64decode(payload_b64).decode())

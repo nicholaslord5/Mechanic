@@ -141,7 +141,7 @@ components:
     MechanicAuthResponse:
       type: object
       properties:
-        auth_token: { type: string, example: "eyJhbGciOiJIUzI1NiIs..." }
+        auth_token: { type: string, example: "eehaerKHIEYIRKkewhre..." }
 
     MechanicUpdate:
       type: object
@@ -160,7 +160,7 @@ components:
         - service_desc
         - customer_id
       properties:
-        vin: { type: string, example: "1HGCM82633A004352" }
+        vin: { type: string, example: "11AEK790EKRKJER12" }
         service_date: { type: string, format: date, example: "2025-05-01" }
         service_desc: { type: string, example: "Oil change" }
         customer_id: { type: integer, example: 1 }
@@ -393,4 +393,169 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'```
+                $ref: '#/components/schemas/ErrorResponse'
+
+definitions:
+  #### Generic wrappers ####
+  MessageResponse:
+    type: object
+    properties:
+      message:
+        type: string
+    example:
+      message: "Deleted successfully"
+
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        type: string
+    example:
+      error: "Missing or invalid Authorization header"
+
+  IdResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+    example:
+      id: 42
+
+  Meta:
+    type: object
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      total:
+        type: integer
+      pages:
+        type: integer
+    example:
+      page: 1
+      per_page: 10
+      total: 25
+      pages: 3
+
+  #### Customer models ####
+  CustomerCreate:
+    type: object
+    required: [name, email, phone, password]
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      password:
+        type: string
+  Customer:
+    allOf:
+      - $ref: "#/definitions/CustomerCreate"
+      - type: object
+        properties:
+          id:
+            type: integer
+  CustomerLogin:
+    type: object
+    required: [email, password]
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  CustomerAuthResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      customer:
+        type: integer
+      auth_token:
+        type: string
+
+  #### Mechanic models ###
+  MechanicCreate:
+    type: object
+    required: [name, email, phone, salary, password]
+    properties:
+      name: { type: string }
+      email: { type: string }
+      phone: { type: string }
+      salary: { type: integer }
+      password: { type: string }
+  Mechanic:
+    type: object
+    properties:
+      id: { type: integer }
+      name: { type: string }
+      email: { type: string }
+      phone: { type: string }
+      salary: { type: integer }
+  MechanicLogin:
+    type: object
+    required: [email, password]
+    properties:
+      email: { type: string }
+      password: { type: string }
+  MechanicAuthResponse:
+    type: object
+    properties:
+      auth_token: { type: string }
+  MechanicUpdate:
+    allOf:
+      - $ref: "#/definitions/MechanicCreate"
+      - type: object
+        properties:
+          password: { type: string }
+
+  #### Inventory models ###
+  InventoryCreate:
+    type: object
+    required: [name, price]
+    properties:
+      name: { type: string }
+      price: { type: number }
+  Inventory:
+    allOf:
+      - $ref: "#/definitions/InventoryCreate"
+      - type: object
+        properties:
+          id: { type: integer }
+  InventoryUpdate:
+    type: object
+    properties:
+      name: { type: string }
+      price: { type: number }
+
+  #### ServiceTicket models ###
+  ServiceTicketCreate:
+    type: object
+    required: [vin, service_date, service_desc, customer_id]
+    properties:
+      vin: { type: string }
+      service_date: { type: string, format: date }
+      service_desc: { type: string }
+      customer_id: { type: integer }
+  ServiceTicket:
+    allOf:
+      - $ref: "#/definitions/ServiceTicketCreate"
+      - type: object
+        properties:
+          id: { type: integer }
+          mechanics:
+            type: array
+            items:
+              type: object
+              properties:
+                id: { type: integer }
+                name: { type: string }
+  ServiceTicketUpdate:
+    type: object
+    properties:
+      vin: { type: string }
+      service_date: { type: string, format: date }
+      service_desc: { type: string }
+      customer_id: { type: integer }
