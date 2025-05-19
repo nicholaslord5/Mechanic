@@ -1,19 +1,17 @@
 import base64, json
-from flask import Flask
-from flask import Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify, current_app
 from . import customers_bp
-from mech.blueprints.customers.schemas import customer_schema, customers_schema
+from .schemas import customer_schema, customers_schema
 from marshmallow import ValidationError
 from mech.models import Customer, db
 from sqlalchemy import select, delete
 from mech.extensions import cache
 from mech.utils.util import encode_customer_token, customer_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import request, jsonify, current_app
 import jwt
 from jwt import InvalidTokenError
 from mech.models import Customer, db
-from mech.utils.util import token_required
+from mech.utils.util import encode_customer_token, customer_required, token_required
 
 @customers_bp.route("/", methods=['POST'])
 def create_customer():
