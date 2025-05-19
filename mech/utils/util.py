@@ -2,7 +2,7 @@ import functools
 import jwt
 from jwt import InvalidTokenError
 from flask import request, jsonify, current_app
-from mech.models import Mechanic
+from mech.models import Mechanic, Customer
 from functools import wraps
 import os
 
