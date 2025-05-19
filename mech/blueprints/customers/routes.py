@@ -13,6 +13,7 @@ from flask import request, jsonify, current_app
 import jwt
 from jwt import InvalidTokenError
 from mech.models import Customer, db
+from mech.utils.util import token_required
 
 @customers_bp.route("/", methods=['POST'])
 def create_customer():
