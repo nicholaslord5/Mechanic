@@ -3,7 +3,6 @@ from flask_swagger import swagger
 from flask_swagger_ui import get_swaggerui_blueprint
 import os
 import yaml
-
 from .blueprints.mechanics.routes import mechanics_bp
 from .blueprints.service_tickets.routes import service_tickets_bp
 from .blueprints.customers.routes import customers_bp
@@ -49,7 +48,7 @@ def create_app(config_name="ProductionConfig"):
 
         return jsonify(spec)
 
-    ###### Serve Swagger UI ###
+    ###### Serve Swagger UI ####
     swagger_ui_bp = get_swaggerui_blueprint(
         "/docs",
         "/swagger.json",
