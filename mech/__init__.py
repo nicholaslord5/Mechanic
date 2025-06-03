@@ -56,4 +56,8 @@ def create_app(config_name="ProductionConfig"):
     )
     app.register_blueprint(swagger_ui_bp, url_prefix="/docs")
 
+    @app.route("/")
+    def index():
+        return "API is live", 200
+
     return app
