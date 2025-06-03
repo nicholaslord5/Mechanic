@@ -1,18 +1,17 @@
 import base64, json
-from flask import Flask
-from flask import Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify, current_app
 from . import customers_bp
-from mech.blueprints.customers.schemas import customer_schema, customers_schema
+from .schemas import customer_schema, customers_schema
 from marshmallow import ValidationError
 from mech.models import Customer, db
 from sqlalchemy import select, delete
 from mech.extensions import cache
 from mech.utils.util import encode_customer_token, customer_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import request, jsonify, current_app
 import jwt
 from jwt import InvalidTokenError
 from mech.models import Customer, db
+from mech.utils.util import encode_customer_token, customer_required, token_required
 
 @customers_bp.route("/", methods=['POST'])
 def create_customer():
@@ -242,7 +241,8 @@ def update_customer(id):
     return customer_schema.jsonify(customer), 200
 
 @customers_bp.route('/', methods=['DELETE'])
-def delete_current_customer():
+@token_required
+def delete_current_customer(current_user):
     """
     Delete Current Customer
 
@@ -282,29 +282,10 @@ def delete_current_customer():
           application/json:
             error: "Customer not found"
     """
-    auth = request.headers.get('Authorization', '')
-    if not auth.lower().startswith('bearer '):
-        return jsonify({'error': 'Missing or invalid Authorization header'}), 401
-
-    token = auth.split(' ', 1)[1]
-    #### parse payload without verifying signature
-    try:
-        payload_b64 = token.split('.')[1]
-        ##### pad base64
-        padding = '=' * (-len(payload_b64) % 4)
-        payload_b64 += padding
-        data = json.loads(base64.urlsafe_b64decode(payload_b64).decode())
-    except Exception:
-        return jsonify({'error': 'Invalid token'}), 401
-
-    current_customer_id = data.get('sub')
-    if not current_customer_id:
-        return jsonify({'error': 'Invalid token'}), 401
-
-    customer = Customer.query.get(current_customer_id)
+    customer = Customer.query.get(current_user.id)
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
 
     db.session.delete(customer)
     db.session.commit()
-    return jsonify({'message': f'deleted customer {current_customer_id}'}), 200
+    return jsonify({'message': 'Customer deleted successfully'}), 200

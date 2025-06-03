@@ -3,12 +3,13 @@ import jwt
 from jwt import InvalidTokenError
 from flask import request, jsonify, current_app
 from mech.models import Mechanic, Customer
+from mech.models import Mechanic, Customer
 from functools import wraps
 import os
 
 SECRET_KEY = os.environ.get('SECRET_KEY') or "super secret secrets"
 
-#### JWT for mechanics ####
+##### Generate JWT for mechanics ###
 def encode_mechanic_token(mechanic_id):
     payload = {'sub': str(mechanic_id)}
     key = current_app.config['SECRET_KEY']
@@ -53,7 +54,7 @@ def encode_customer_token(customer_id):
     algo = current_app.config.get('JWT_ALGO', 'HS256')
     return jwt.encode(payload, key, algorithm=algo)
 
-##### ensur valid customer token is present####
+###### ensur a valid customer token is present ######
 def customer_required(f):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
