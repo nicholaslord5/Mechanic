@@ -282,10 +282,10 @@ def delete_current_customer(current_user):
           application/json:
             error: "Customer not found"
     """
-    customer = Customer.query.get(current_user.id)
+    customer = db.session.get(Customer, current_user.id)  ###### Updated SQLAlchemy syntax####
     if not customer:
         return jsonify({'error': 'Customer not found'}), 404
 
     db.session.delete(customer)
     db.session.commit()
-    return jsonify({'message': 'Customer deleted successfully'}), 200
+    return jsonify({'message': f'deleted customer {customer.id}'}), 200  #### Matches test expectation #####
